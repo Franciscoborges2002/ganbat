@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
+import dotenv from "dotenv";
 
 interface Ipayload{
     sub: string;
@@ -9,6 +10,7 @@ export function ensureAuthenticated(request: Request, response: Response, next: 
     
     //Receive the token
     const authToken = request.headers.authorization;
+    dotenv.config({path: '../../.env'});//To acess the enviornment variables
 
     //Validate if the token is fullfiled
     if(!authToken){
@@ -21,7 +23,7 @@ export function ensureAuthenticated(request: Request, response: Response, next: 
 
     try{
         //Check if the token is valid
-        const { sub } = verify(token, "0e6aac290219fec35098969f86dc3b1b") as Ipayload;//Force the verify to have the interface IPayload
+        const { sub } = verify(token, `${process.env.SECRETKEY}`) as Ipayload;//Force the verify to have the interface IPayload
 
         //Recuperate information about user
         request.user_id = sub;//When i want to have the user id of the logged user in other stages

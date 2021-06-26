@@ -1,6 +1,7 @@
 import { getCustomRepository } from "typeorm";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
+import dotenv from "dotenv";
 
 import { UsersRepositories } from "../repositories/UsersRepositories";
 
@@ -13,6 +14,7 @@ class AuthenticateUserService{
 
     async execute({email, password}: IAuthenticateRequest){
         const usersRepositories = getCustomRepository(UsersRepositories);
+        dotenv.config({path: '../../.env'});//To acess the enviornment variables
 
         //Verify if the email exists
         const user = await usersRepositories.findOne({email});
@@ -31,7 +33,7 @@ class AuthenticateUserService{
         //Generate the token
         const token = sign({
             email: user.email                       //Our payload from jwt
-        }, "0e6aac290219fec35098969f86dc3b1b", {    //The secret private key
+        }, `${process.env.SECRETKEY}`, {    //The secret private key
             subject: user.id,                       //options
             expiresIn: "1d"                         //The expiresIn we can use the refreshToken (< Duration, > RefreshTOken)
         });                                         //1d = 1 day

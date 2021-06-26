@@ -1,12 +1,13 @@
 import "reflect-metadata";
 import express, { Request, Response, NextFunction } from "express";
 import "express-async-errors";
+import dotenv from "dotenv";
 
 import { router } from "./routes";
 
 import "./database";
 
-const PORT = 3000;//Easly change the port of all server
+dotenv.config({path : '../.env'});
 const app = express();
 
 app.use(express.json());
@@ -27,7 +28,6 @@ app.use((err: Error, request: Request, response: Response, next: NextFunction) =
     });
 });
 
-
-app.listen(PORT, () => {
-    console.log("Server is running in port " + PORT);
+app.listen(process.env.PORT || 3000, () => {
+    console.log("Server is running");
 });
